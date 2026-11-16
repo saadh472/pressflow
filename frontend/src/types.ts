@@ -1,0 +1,13 @@
+export type User = { username: string; displayName: string };
+export type Session = { authenticated: boolean; csrfToken: string; user?: User };
+export type Customer = { id: number; name: string; email: string; phone: string; company: string };
+export type Service = { id: number; name: string; description: string; unitPriceCents: number; active?: boolean; version?: number };
+export type Status = 'NEW' | 'DESIGN' | 'PRINTING' | 'LAMINATION' | 'READY' | 'DELIVERED' | 'CANCELLED';
+export type Order = { id: number; reference: string; customerId: number; customerName: string; title: string; serviceId: number; serviceName: string; quantity: number; paper: 'PLAIN' | 'PREMIUM'; lamination: boolean; dueDate: string; status: Status; totalCents: number; paidCents: number; balanceCents: number; createdAt: string; version: number };
+export type Payment = { id: number; orderId: number; orderReference: string; customerName: string; amountCents: number; method: string; reference: string; createdAt: string };
+export type Dashboard = { activeOrders: number; readyOrders: number; totalRevenueCents: number; outstandingCents: number; customerCount: number; recentOrders: Order[]; statusCounts: Partial<Record<Status, number>> };
+export const statuses: Status[] = ['NEW', 'DESIGN', 'PRINTING', 'LAMINATION', 'READY', 'DELIVERED', 'CANCELLED'];
+export const statusLabel = (status: string) => status.charAt(0) + status.slice(1).toLowerCase();
+export const money = (cents: number) => new Intl.NumberFormat('en-PK', { style: 'currency', currency: 'PKR', maximumFractionDigits: 2 }).format(cents / 100);
+export const dateLabel = (value: string) => new Date(value.length === 10 ? `${value}T12:00:00` : value).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+export const nextStatus = (order: Order): Status | null => ({ NEW: 'DESIGN', DESIGN: 'PRINTING', PRINTING: order.lamination ? 'LAMINATION' : 'READY', LAMINATION: 'READY', READY: 'DELIVERED' } as Partial<Record<Status, Status>>)[order.status] || null;

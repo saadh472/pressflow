@@ -1,0 +1,35 @@
+server:
+  address: ${PRESSFLOW_HOST:127.0.0.1}
+  port: ${PRESSFLOW_PORT:8089}
+  servlet:
+    session:
+      timeout: 2h
+      cookie:
+        name: PRESSFLOW_SESSION
+        http-only: true
+        same-site: lax
+        secure: ${PRESSFLOW_SECURE_COOKIE:false}
+spring:
+  application:
+    name: pressflow
+  jackson:
+    deserialization:
+      fail-on-unknown-properties: true
+      accept-float-as-int: false
+  datasource:
+    url: jdbc:sqlite:${PRESSFLOW_DATABASE:./data/pressflow.sqlite}
+    driver-class-name: org.sqlite.JDBC
+    hikari:
+      maximum-pool-size: 1
+      connection-init-sql: PRAGMA foreign_keys=ON
+      connection-timeout: 10000
+  mvc:
+    problemdetails:
+      enabled: false
+pressflow:
+  username: ${PRESSFLOW_USERNAME:operator}
+  password: ${PRESSFLOW_PASSWORD:DemoPass123!}
+logging:
+  level:
+    root: WARN
+    com.pressflow: INFO
